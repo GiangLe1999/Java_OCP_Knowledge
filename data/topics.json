@@ -1,0 +1,411 @@
+{
+  "topics": [
+    {
+      "id": "topic-1769415209029",
+      "title": "Lớp Sealed là cơ chế cho phép kiểm soát chặt chẽ các lớp có thể kế thừa từ một lớp hoặc triển khai một interface",
+      "category": "class-design",
+      "parentTopicId": "parent-1769414182386",
+      "parentTopicTitle": "Lớp Sealed",
+      "content": [
+        {
+          "type": "code",
+          "value": "public sealed class LopCha permits LopCon1, LopCon2, LopCon3 {\r\n    // ...\r\n}"
+        },
+        {
+          "type": "text",
+          "value": "Những lớp khác ngoài LopCon1, LopCon2, LopCon3, nếu kế thừa từ LopCha sẽ gây lỗi biên dịch."
+        }
+      ],
+      "keywords": [
+        "Lớp Sealed"
+      ],
+      "updatedAt": "2026-01-26T08:21:29.294Z"
+    },
+    {
+      "title": "Từ khóa sealed, non-sealed, final, phải đặt trước từ khóa class hoặc interface. Và bắt buộc phải có mệnh đề permits khi dùng sealed (trừ khi lớp con nằm cùng file)",
+      "category": "class-design",
+      "parentTopicId": "parent-1769414182386",
+      "parentTopicTitle": "Lớp Sealed",
+      "content": [
+        {
+          "type": "code",
+          "value": "sealed class A permits B, C {}\r\nnon-sealed class B extends A {}\r\nfinal class C extends A {}\r\n"
+        }
+      ],
+      "keywords": [
+        "Lớp Sealed",
+        "non-sealed",
+        "final",
+        "sealed"
+      ],
+      "id": "topic-1769415830313",
+      "createdAt": "2026-01-26T08:23:50.313Z",
+      "updatedAt": "2026-01-26T08:23:50.313Z"
+    },
+    {
+      "id": "topic-1769416072152",
+      "title": "Các từ khóa sealed, non-sealed, final không thể xuất hiện đồng thời cùng nhau, nếu không sẽ gây lỗi compile",
+      "category": "class-design",
+      "parentTopicId": "parent-1769414182386",
+      "parentTopicTitle": "Lớp Sealed",
+      "content": [
+        {
+          "type": "code",
+          "value": "// ✅ Đúng: sealed + permits\r\nsealed class Shape permits Circle, Square {\r\n    // ...\r\n}\r\n\r\n// ✅ Đúng (nếu lớp con cùng file)\r\nsealed class Animal {  // Không cần permits nếu lớp con nằm cùng file\r\n    // ...\r\n}\r\nfinal class Dog extends Animal { /* ... */ }\r\n"
+        }
+      ],
+      "keywords": [
+        "Lớp Sealed",
+        "sealed",
+        "non-sealed",
+        "final"
+      ],
+      "updatedAt": "2026-01-26T08:30:59.527Z"
+    },
+    {
+      "id": "topic-1769416244166",
+      "title": "Tại Class kế thừa 1 Sealed Class, bắt buộc phải lựa chọn hoặc là tiếp tục hạn chế kế thừa với sealed và permits, hoặc không cho kế thừa thêm với final, hoặc mở rộng tự do kế thừa với non-sealed. Nếu không sẽ gây lỗi biên dịch",
+      "category": "class-design",
+      "parentTopicId": "parent-1769414182386",
+      "parentTopicTitle": "Lớp Sealed",
+      "content": [
+        {
+          "type": "code",
+          "value": "public sealed class Shape permits Circle, Square, Rectangle {\r\n    // ...\r\n}\r\n\r\npublic sealed class Square extends Shape permits ColoredSquare { ... }\r\npublic final class Circle extends Shape { ... }\r\npublic non-sealed class Rectangle extends Shape { ... }\r\n\r\npublic final class ColoredSquare extends Square { ... }"
+        }
+      ],
+      "keywords": [
+        "Lớp Sealed",
+        "sealed",
+        "non-sealed",
+        "final"
+      ],
+      "updatedAt": "2026-01-26T08:30:52.718Z"
+    },
+    {
+      "title": "Khi khai báo một sealed class, các lớp được phép kế thừa (listed in permits) phải nằm cùng package trừ khi đang sử dụng sealed class trong module system",
+      "category": "class-design",
+      "parentTopicId": "parent-1769414182386",
+      "parentTopicTitle": "Lớp Sealed",
+      "content": [
+        {
+          "type": "text",
+          "value": "Nếu dự án không dùng modules → bắt buộc phải cùng package"
+        },
+        {
+          "type": "code",
+          "value": "package com.example.shapes;\r\n\r\npublic sealed class Shape permits Circle, Rectangle {}\r\n→ Lớp Circle và Rectangle phải ở trong package com.example.shapes.\r\n"
+        },
+        {
+          "type": "text",
+          "value": "Khi có permits, nếu hai lớp này nằm trong hai package khác nhau, code sẽ không biên dịch!"
+        }
+      ],
+      "keywords": [
+        "Lớp Sealed"
+      ],
+      "id": "topic-1769416444125",
+      "createdAt": "2026-01-26T08:34:04.125Z",
+      "updatedAt": "2026-01-26T08:34:04.125Z"
+    },
+    {
+      "id": "topic-1769416673046",
+      "title": "Từ khóa permits khi khai báo một lớp sealed không phải lúc nào cũng bắt buộc",
+      "category": "class-design",
+      "parentTopicId": "parent-1769414182386",
+      "parentTopicTitle": "Lớp Sealed",
+      "content": [
+        {
+          "type": "text",
+          "value": "| Vị trí lớp con                         | Có cần permits?                     |\n|--------------------------------------|---------------------------------------|\n| Cùng file với lớp sealed          | Không bắt buộc (có thể bỏ)             |\n| Lớp lồng bên trong lớp sealed       | Không bắt buộc (có thể bỏ)             |"
+        },
+        {
+          "type": "code",
+          "value": "// Snake.java\r\npublic sealed class Snake permits Cobra {}  \r\nfinal class Cobra extends Snake {}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "→ Trong trường hợp này, mệnh đề permits có thể bỏ qua, nhưng từ khóa extends vẫn bắt buộc"
+        },
+        {
+          "type": "code",
+          "value": "// Snake.java\r\npublic sealed class Snake {}  // Không cần permits\r\nfinal class Cobra extends Snake {}  // Bắt buộc extends\r\n"
+        }
+      ],
+      "keywords": [
+        "Lớp Sealed"
+      ],
+      "updatedAt": "2026-01-26T08:54:07.810Z"
+    },
+    {
+      "id": "topic-1769417777679",
+      "title": "Trường hợp lớp con lồng trong 1 lớp Sealed, lớp Sealed có thể dùng hay không dùng permits đều được, nhưng nếu dùng phải chỉ rõ namespace của lớp lồng",
+      "category": "class-design",
+      "parentTopicId": "parent-1769414182386",
+      "parentTopicTitle": "Lớp Sealed",
+      "content": [
+        {
+          "type": "code",
+          "value": "public sealed class Snake permits Snake.Cobra {  // Phải thêm Snake.Cobra\r\n   final class Cobra extends Snake {}\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "→ Khuyến nghị: Nếu tất cả lớp con đều là lớp lồng, nên bỏ qua permits để code dễ đọc hơn."
+        }
+      ],
+      "keywords": [
+        "Lớp Sealed"
+      ],
+      "updatedAt": "2026-01-26T09:00:15.275Z"
+    },
+    {
+      "id": "topic-1769417885041",
+      "title": "Interface cũng có thể dùng cơ chế sealed để kiểm soát các Interface nào có thể kế thừa, hoặc các Class nào có thể triển khai, với các quy tắc tương tự lớp Sealed",
+      "category": "class-design",
+      "parentTopicId": "parent-1769414182386",
+      "parentTopicTitle": "Lớp Sealed",
+      "content": [
+        {
+          "type": "text",
+          "value": "Lớp triển khai hoặc interface kế thừa phải cùng package hoặc module với sealed interface.\n\nPermits có thể áp dụng cho:\n- Lớp triển khai interface\n- Interface mở rộng từ interface sealed"
+        },
+        {
+          "type": "code",
+          "value": "public sealed interface Swims permits Duck, Swan, Floats {}  \r\npublic final class Duck implements Swims {}  // Lớp triển khai  \r\npublic non-sealed interface Floats extends Swims {}  // Interface mở rộng  \r\n"
+        }
+      ],
+      "keywords": [
+        "Lớp Sealed",
+        "Sealed Interface"
+      ],
+      "updatedAt": "2026-01-26T09:01:07.463Z"
+    },
+    {
+      "title": "Vì Interface không thể final (luôn ngầm định là abstract) nên Interface extends từ Sealed Interface chỉ có thể là sealed hoặc non-sealed",
+      "category": "class-design",
+      "parentTopicId": "parent-1769414182386",
+      "parentTopicTitle": "Lớp Sealed",
+      "content": [
+        {
+          "type": "text",
+          "value": ""
+        }
+      ],
+      "keywords": [
+        "Lớp Sealed",
+        "Sealed Interface"
+      ],
+      "id": "topic-1769418173320",
+      "createdAt": "2026-01-26T09:02:53.320Z",
+      "updatedAt": "2026-01-26T09:02:53.320Z"
+    },
+    {
+      "id": "topic-1769418234356",
+      "title": "Để một lớp được xem là POJO (Plain Old Java Object), nó phải đơn giản, độc lập, và không phụ thuộc vào bất kỳ framework nào",
+      "category": "oop-basics",
+      "parentTopicId": "parent-1769418246883",
+      "parentTopicTitle": "POJO",
+      "content": [
+        {
+          "type": "text",
+          "value": "**Bắt buộc:**\n\n**1.\tKhông extends bất kỳ lớp cụ thể nào từ framework**\n\nVí dụ: không kế thừa HibernateEntity, SpringComponent, MongoDocument…\n\nPOJO có thể kế thừa class Java thuần hoặc Object.\n\n**2.\tKhông implements các interface được định nghĩa bởi framework**\n\nVí dụ: không implements Serializable của JPA/Hibernate, ApplicationContextAware của Spring, Model của JSP\n\n→ POJO không được buộc phải tuân theo hành vi framework.\n\n**3.\tKhông dùng annotation bắt buộc của framework**\n\nKhông có: @Entity, @Table, @Component, @JsonProperty, @Autowired…\n\n→ Nếu gắn các annotation này thì nó không còn “plain old” nữa, mà trở thành Java Bean, Entity, hoặc Spring Bean.\n\nChỉ các annotation Java thuần như @Override thì mới dùng được cho POJO.\n\n\n**Khuyến nghị (Không bắt buộc):**\n1.\tCó constructor không tham số\n2.\tFields để private + đầy đủ getter/setter\n3.\tNên override toString(), equals(), hashCode()\n\n\n**Cần tránh:**\n1.\tBusiness logic phức tạp\n2.\tPhụ thuộc vào framework\n3.\tXử lý ngoại lệ đặc thù framework\n"
+        },
+        {
+          "type": "code",
+          "value": "public class Student {\r\n    private String id;\r\n    private String name;\r\n    \r\n    public Student() {}\r\n    \r\n    // Getter/Setter\r\n    public String getId() { return id; }\r\n    public void setId(String id) { this.id = id; }\r\n    // ... (các getter/setter khác)\r\n    \r\n    @Override\r\n    public String toString() {\r\n        return \"Student [id=\" + id + \", name=\" + name + \"]\";\r\n    }\r\n}\r\n"
+        }
+      ],
+      "keywords": [
+        "POJO"
+      ],
+      "updatedAt": "2026-01-26T09:28:26.459Z"
+    },
+    {
+      "id": "topic-1769421007328",
+      "title": "Record là một kiểu lớp đặc biệt giúp định nghĩa các lớp bất biến (immutable) chứa dữ liệu một cách ngắn gọn, tự động triển khai equals(), hashCode(), toString() và constructor",
+      "category": "class-design",
+      "parentTopicId": "parent-1769421007314",
+      "parentTopicTitle": "Record",
+      "content": [
+        {
+          "type": "text",
+          "value": "- Record có thể dùng để thay thế POJO khi chỉ cần lưu trữ dữ liệu\n- **Immutable (bất biến):** Các trường (fields) ngầm định là private final và không thể thay đổi sau khi khởi tạo vì không có setters\n- **Tự động sinh phương thức:** equals(), hashCode(), toString()\n- **Không thể kế thừa:** Record là final (không thể mở rộng)\n- Không thể thêm instance fields nào khác ngoài các instance fields sẵn có (ngoài các fields đã định nghĩa ở phần header của Record)\n- Record không bắt buộc phải có sẵn bất kì instance field nào\n"
+        },
+        {
+          "type": "code",
+          "value": "record A () { // Không yêu cầu phải có field nào\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "- Có thể thêm không giới hạn các static fields, static method và instance method. Lưu ý là tên của static fields không được trùng với instance fields"
+        },
+        {
+          "type": "code",
+          "value": "public record Iguana(int age) {\r\n    private static final int age = 10;\r\n}\r\n"
+        }
+      ],
+      "keywords": [
+        "Record"
+      ],
+      "updatedAt": "2026-01-26T09:55:59.873Z"
+    },
+    {
+      "title": "Record ngầm định là final nên không thể đi cùng với abstract",
+      "category": "class-design",
+      "parentTopicId": "parent-1769421007314",
+      "parentTopicTitle": "Record",
+      "content": [
+        {
+          "type": "text",
+          "value": ""
+        }
+      ],
+      "keywords": [
+        "Record"
+      ],
+      "id": "topic-1769440188341",
+      "createdAt": "2026-01-26T15:09:48.342Z",
+      "updatedAt": "2026-01-26T15:09:48.342Z"
+    },
+    {
+      "id": "topic-1769440254524",
+      "title": "Record không thể extends từ class nhưng lại có thể implements từ interface",
+      "category": "class-design",
+      "parentTopicId": "parent-1769421007314",
+      "parentTopicTitle": "Record",
+      "content": [
+        {
+          "type": "text",
+          "value": "Java quy định trong ngôn ngữ:"
+        },
+        {
+          "type": "code",
+          "value": "public record User(String name) extends java.lang.Record { ... }"
+        },
+        {
+          "type": "text",
+          "value": "Do đó **superclass của record đã được cố định là java.lang.Record.** Không thể thay đổi hoặc thêm superclass khác"
+        }
+      ],
+      "keywords": [
+        "Record"
+      ],
+      "updatedAt": "2026-01-26T15:11:22.748Z"
+    },
+    {
+      "title": "Trong Record, phần thân hàm nào mà có logic liên quan đến việc cập nhật giá trị của instance field thì sẽ gây lỗi biên dịch vì mặc định các instance field của record là final",
+      "category": "class-design",
+      "parentTopicId": "parent-1769421007314",
+      "parentTopicTitle": "Record",
+      "content": [
+        {
+          "type": "code",
+          "value": "public record Student(String id, String name, int age) {\r\n    // Tự động có:\r\n    // - Các fields final gồm id, name, age\r\n    // - Constructor (Student(String id, String name, int age))\r\n    // - Getter (id(), name(), age()) - KHÔNG phải getId() như POJO\r\n    // - equals(), hashCode(), toString()\r\n}\r\n"
+        }
+      ],
+      "keywords": [
+        "Record"
+      ],
+      "id": "topic-1769440418124",
+      "createdAt": "2026-01-26T15:13:38.124Z",
+      "updatedAt": "2026-01-26T15:13:38.124Z"
+    },
+    {
+      "id": "topic-1769440658894",
+      "title": "Accessor method (phương thức truy cập) là một phương thức public được dùng để lấy giá trị của một field (thuộc tính) nhưng không thay đổi nó",
+      "category": "oop-basics",
+      "parentTopicId": "parent-1769440863595",
+      "parentTopicTitle": "Encapsulation",
+      "content": [
+        {
+          "type": "text",
+          "value": "- Với **class thông thường**, accessor thường chính là **getter** (`getXxx()` hoặc `isXxx()` cho boolean).\n- Với **record**, accessor **không dùng get** - nó có tên **giống hệt** tên của field mà bạn khai báo trong phần header của record."
+        },
+        {
+          "type": "code",
+          "value": "public final class BeardedDragon extends java.lang.Record {\r\n    private final boolean fun;\r\n    public BeardedDragon(boolean fun) { this.fun = fun; }\r\n    public boolean fun() { return fun; } // accessor method\r\n}\r\n"
+        }
+      ],
+      "keywords": [
+        "Accessor method",
+        "Encapsulation"
+      ],
+      "updatedAt": "2026-01-26T15:26:16.653Z"
+    },
+    {
+      "title": "Record cho phép override các hàm getter",
+      "category": "class-design",
+      "parentTopicId": "parent-1769421007314",
+      "parentTopicTitle": "Record",
+      "content": [
+        {
+          "type": "text",
+          "value": "Trong ví dụ dưới đây, mới đầu nhìn vào có thể hiểu nhầm code sẽ gây lỗi biên dịch vì ta dùng @Override trong khi record không implements bất cứ interface nào.\n\nTuy nhiên đoạn code là hoàn toàn hợp lệ vì ta đang override chính accessor method fun() mà compiler tạo ra từ component boolean fun ở phần đầu record."
+        },
+        {
+          "type": "code",
+          "value": "record BeardedDragon(boolean fun) {\r\n    @Override\r\n    public boolean fun() { return false; }\r\n}\r\n"
+        }
+      ],
+      "keywords": [
+        "Record"
+      ],
+      "id": "topic-1769441825769",
+      "createdAt": "2026-01-26T15:37:05.769Z",
+      "updatedAt": "2026-01-26T15:37:05.769Z"
+    },
+    {
+      "id": "topic-1769441880489",
+      "title": "Khi khai báo một record với ít nhất một field, compiler sẽ tự động sinh ra một số thành phần mặc định, và bạn có thể override chúng nếu muốn",
+      "category": "class-design",
+      "parentTopicId": "parent-1769421007314",
+      "parentTopicTitle": "Record",
+      "content": [
+        {
+          "type": "text",
+          "value": "Những thành phần luôn được sinh ra là:\n\n- Mỗi field sẽ có một accessor method\n- toString() method in ra text có dạng RecordName\\[field1=value1, field2=value2\\]\n- equals() method so sánh dựa trên giá trị của tất cả các field\n- hashCode() method sinh ra dựa trên giá trị của các field."
+        }
+      ],
+      "keywords": [
+        "Record"
+      ],
+      "updatedAt": "2026-01-26T15:43:43.786Z"
+    },
+    {
+      "title": "Nếu record không có field nào, record vẫn sinh ra đầy đủ toString(), equals(), hashCode() nhưng sẽ không có accessor method nào",
+      "category": "class-design",
+      "parentTopicId": "parent-1769421007314",
+      "parentTopicTitle": "Record",
+      "content": [
+        {
+          "type": "code",
+          "value": "public final class Empty extends java.lang.Record {\r\n    \r\n    public Empty() {}\r\n\r\n    @Override\r\n    public boolean equals(Object obj) {\r\n        return this == obj || (obj instanceof Empty);\r\n    }\r\n\r\n    @Override\r\n    public int hashCode() {\r\n        return 0; // thường là hằng số\r\n    }\r\n\r\n    @Override\r\n    public String toString() {\r\n        return \"Empty[]\";\r\n    }\r\n}\r\n"
+        }
+      ],
+      "keywords": [
+        "Record"
+      ],
+      "id": "topic-1769442111118",
+      "createdAt": "2026-01-26T15:41:51.118Z",
+      "updatedAt": "2026-01-26T15:41:51.118Z"
+    },
+    {
+      "id": "topic-1769442192636",
+      "title": "So sánh Record vs POJO",
+      "category": "class-design",
+      "parentTopicId": "parent-1769421007314",
+      "parentTopicTitle": "Record",
+      "content": [
+        {
+          "type": "text",
+          "value": "| Tiêu chí        | Record                                     | POJO                                      |\n|-----------------|--------------------------------------------|-------------------------------------------|\n| Độ dài code     | Ngắn gọn (tự động sinh phương thức)         | Dài hơn (phải viết tay)                    |\n| Immutability    | Mặc định immutable                          | Có thể mutable (thay đổi được) vì có setter |\n| Kế thừa         | Không thể kế thừa (`final`)                 | Có thể kế thừa                             |\n| Getter          | `student.id()` (không dùng `getId()`)       | `student.getId()` (theo JavaBean)          |\n| Dùng khi nào?   | Khi cần lớp đơn giản, chỉ chứa dữ liệu      | Khi cần logic phức tạp, mutable            |\n"
+        }
+      ],
+      "keywords": [
+        "Record",
+        "POJO"
+      ],
+      "updatedAt": "2026-01-26T15:43:54.829Z"
+    }
+  ]
+}

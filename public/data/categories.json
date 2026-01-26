@@ -1,0 +1,74 @@
+{
+    "categories": [
+        {
+            "id": "java-core-fundamentals",
+            "title": "Java Core Fundamentals",
+            "description": "Kiểu dữ liệu nguyên thủy, wrapper, String, StringBuilder, var, phạm vi biến, toán tử",
+            "icon": "🧱",
+            "color": "blue"
+        },
+        {
+            "id": "oop-basics",
+            "title": "OOP Cơ Bản",
+            "description": "Đóng gói, kế thừa, đa hình, abstract class, interface",
+            "icon": "🏗️",
+            "color": "purple"
+        },
+        {
+            "id": "class-design",
+            "title": "Thiết Kế Lớp & OOP Nâng Cao",
+            "description": "Override vs overload, access modifier, nested class, enum, record, sealed class",
+            "icon": "📐",
+            "color": "indigo"
+        },
+        {
+            "id": "exception-handling",
+            "title": "Xử Lý Ngoại Lệ",
+            "description": "Checked/unchecked exception, try-catch-finally, try-with-resources",
+            "icon": "⚠️",
+            "color": "red"
+        },
+        {
+            "id": "collections-generics",
+            "title": "Collections & Generics",
+            "description": "List, Set, Map, Comparable vs Comparator, generics, wildcard",
+            "icon": "📦",
+            "color": "orange"
+        },
+        {
+            "id": "functional-streams",
+            "title": "Lập Trình Hàm & Stream",
+            "description": "Lambda, functional interface, Stream API, Optional",
+            "icon": "⚡",
+            "color": "yellow"
+        },
+        {
+            "id": "datetime-localization",
+            "title": "Date Time & Localization",
+            "description": "LocalDate, LocalDateTime, DateTimeFormatter, Period, Duration, Locale",
+            "icon": "📅",
+            "color": "cyan"
+        },
+        {
+            "id": "concurrency",
+            "title": "Đa Luồng & Đồng Thời",
+            "description": "Thread, Runnable, ExecutorService, đồng bộ hóa, parallel stream",
+            "icon": "🧵",
+            "color": "teal"
+        },
+        {
+            "id": "io-nio",
+            "title": "I/O & NIO.2",
+            "description": "File, Path, Files, đọc ghi file, serialization",
+            "icon": "💾",
+            "color": "green"
+        },
+        {
+            "id": "modules",
+            "title": "Java Module System (JPMS)",
+            "description": "module-info.java, requires, exports, opens, cơ chế module",
+            "icon": "🧩",
+            "color": "gray"
+        }
+    ]
+}
