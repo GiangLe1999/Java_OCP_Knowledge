@@ -76,6 +76,13 @@
       "description": "",
       "id": "parent-1769872861546",
       "createdAt": "2026-01-31T15:21:01.546Z"
+    },
+    {
+      "title": "var",
+      "category": "java-core-fundamentals",
+      "description": "",
+      "id": "parent-1769876934229",
+      "createdAt": "2026-01-31T16:28:54.229Z"
     }
   ]
 }

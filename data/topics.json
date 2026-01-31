@@ -1473,6 +1473,150 @@
         "Hàm sort"
       ],
       "updatedAt": "2026-01-31T15:28:59.643Z"
+    },
+    {
+      "title": "Trong một Lambda Expression, tất cả tham số phải dùng cùng một kiểu khai báo: hoặc không ghi kiểu, hoặc ghi rõ kiểu, hoặc dùng var - không được trộn lẫn các cách với nhau",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "text",
+          "value": "Những ví dụ sau không hợp lệ:"
+        },
+        {
+          "type": "code",
+          "value": "(var x, y) -> \"Hello\"                   // Lỗi: x có var, y không\r\n(var x, Integer y) -> true              // Lỗi: trộn var và kiểu\r\n(String x, var y, Integer z) -> true    // Lỗi: trộn lẫn var, kiểu cụ thể\r\n(Integer x, y) -> \"goodbye\"             // Lỗi: x có kiểu, y không"
+        }
+      ],
+      "keywords": [],
+      "id": "topic-1769874755426",
+      "createdAt": "2026-01-31T15:52:35.426Z",
+      "updatedAt": "2026-01-31T15:52:35.426Z"
+    },
+    {
+      "id": "topic-1769874945537",
+      "title": "Tham số trong Lambda Expression giống tham số phương thức ở chỗ có thể dùng final và annotation, nhưng chỉ khi có khai báo kiểu (Type hoặc var)",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "text",
+          "value": "-   Nếu ghi rõ kiểu hoặc dùng `var` thì mới được phép thêm modifier/annotation\n-   Nếu không ghi kiểu (type inference) thì **không được** thêm modifier/annotation"
+        },
+        {
+          "type": "code",
+          "value": "// HỢP LỆ\r\nPredicate<String> p1 = (@NotNull String s) -> true;\r\nPredicate<String> p2 = (final String s) -> true;\r\nPredicate<String> p3 = (final var s) -> true;\r\n\r\n// LỖI BIÊN DỊCH\r\nPredicate<String> p4 = (@NotNull s) -> true;\r\nPredicate<String> p5 = (final s) -> true;"
+        },
+        {
+          "type": "text",
+          "value": "`@NotNull` **chỉ là một annotation ví dụ**, dùng để đánh dấu rằng một biến/tham số **không được phép null**.  Nó **không phải annotation mặc định của Java core**, mà nó có thể lấy ra từ nhiều thư viện khác nhau:\n\n-   `org.jetbrains.annotations.NotNull` (IntelliJ, Kotlin interop)    \n-   `javax.validation.constraints.NotNull` (Bean Validation – Hibernate Validator)    \n-   `jakarta.validation.constraints.NotNull` (phiên bản Jakarta mới)\n-   `edu.umd.cs.findbugs.annotations.NotNull` (FindBugs)"
+        }
+      ],
+      "keywords": [
+        "Lambda Expression"
+      ],
+      "updatedAt": "2026-01-31T16:09:59.316Z"
+    },
+    {
+      "id": "topic-1769876934247",
+      "title": "var dùng được cho biến cục bộ và tham số của Lambda Expression, nhưng không dùng được cho tham số phương thức",
+      "category": "java-core-fundamentals",
+      "parentTopicId": "parent-1769876934229",
+      "parentTopicTitle": "var",
+      "content": [
+        {
+          "type": "code",
+          "value": "// HỢP LỆ (lambda dùng var)\r\nPredicate<String> p = (var s) -> s.isEmpty();\r\n\r\n// LỖI BIÊN DỊCH (method parameter không được dùng var)\r\nvoid test(var s) { }   // ❌ compile error"
+        }
+      ],
+      "keywords": [
+        "var",
+        "Lambda Expression"
+      ],
+      "updatedAt": "2026-01-31T16:31:09.956Z"
+    },
+    {
+      "title": "Lambda expression có thể truy cập biến instance, biến static, tham số phương thức và biến cục bộ (nếu effectively final); riêng khi lambda nằm trong static method thì chỉ truy cập được biến static",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "text",
+          "value": "Những thành phần mà Lambda có thể truy cập gồm:\n\n-   Biến instance, biến static (nếu định nghĩa lambda trong instance method)\n-   Chỉ có thể truy cập biến static (nếu định nghĩa lambda trong static method)\n-   Tham số method\n-   Biến cục bộ nếu là effectively final"
+        }
+      ],
+      "keywords": [
+        "Lambda Expression"
+      ],
+      "id": "topic-1769877166673",
+      "createdAt": "2026-01-31T16:32:46.673Z",
+      "updatedAt": "2026-01-31T16:32:46.673Z"
+    },
+    {
+      "id": "topic-1769877341077",
+      "title": "Trong java.util.function chỉ có IntSupplier, LongSupplier và DoubleSupplier - không tồn tại FloatSupplier",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "text",
+          "value": "Java ưu tiên tối ưu cho các primitive dùng nhiều và có lợi về hiệu năng (`int`, `long`, `double`). \n`float` ít được dùng trong các API functional nên không được cung cấp supplier riêng (bạn phải dùng `Supplier<Float>` nếu cần)."
+        }
+      ],
+      "keywords": [
+        "IntSupplier",
+        "LongSupplier",
+        "DoubleSupplier",
+        "Supplier"
+      ],
+      "updatedAt": "2026-01-31T16:35:59.548Z"
+    },
+    {
+      "id": "topic-1769877484291",
+      "title": "Trong Lambda Expression, không được khai báo tham số hoặc biến cục bộ trùng tên với tham số hay biến cục bộ của method ở outer scope",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "text",
+          "value": "Lambda không tạo scope mới cho tên biến, nên không thể đặt trùng tên tham số/biến cục bộ của Lambda với:\n\n- Biến local outer scope (thuộc hàm) đã tồn tại trước lambda.\n- Tham số của hàm.\n\nTuy nhiên, lưu ý là có thể khai báo biến trùng tên **nếu biến local outer scope chưa tồn tại tại thời điểm khai báo lambda** (biến được khai báo sau lambda)."
+        },
+        {
+          "type": "code",
+          "value": "public static void main(String[] args) {\r\n    char end = 'z';\r\n    Predicate<Character> predicate = c -> {\r\n        char start = 'a'; // được phép vì outer scope chưa có biến \"start\"\r\n        return start <= c && c <= end;\r\n    };\r\n    char start = 'a'; // khai báo sau lambda\r\n}"
+        }
+      ],
+      "keywords": [
+        "Lambda Expression"
+      ],
+      "updatedAt": "2026-01-31T16:40:06.061Z"
+    },
+    {
+      "title": "Một biến cục bộ thuộc outer scope nếu được Lambda dùng tới trong phần thân rồi thì không được gán lại sau đó, vì khi bị thay đổi giá trị nó sẽ không còn là effectively final",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "code",
+          "value": "public static void main(String[] args) {\r\n    char end = 'z';\r\n    // Lambda capture biến end\r\n    Predicate<Character> predicate = c -> c <= end;\r\n    // Thay đổi giá trị biến sau khi lambda được định nghĩa\r\n        // ❌ Compile error: Variable used in lambda should be final or effectively final\r\n    end = 'y'; \r\n    System.out.println(predicate.test('a'));\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "Lưu ý là lỗi compile xảy ra tại dòng sử dụng đến biến ở trong phần thân lambda, chứ không phải tại dòng gán lại giá trị cho biến."
+        }
+      ],
+      "keywords": [
+        "Lambda Expression"
+      ],
+      "id": "topic-1769877764532",
+      "createdAt": "2026-01-31T16:42:44.532Z",
+      "updatedAt": "2026-01-31T16:42:44.532Z"
     }
   ]
 }

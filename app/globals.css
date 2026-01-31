@@ -147,6 +147,10 @@
   .rotate-y-180 {
     transform: rotateY(180deg);
   }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-in-out;
+  }
 }
 
 @keyframes float {
@@ -157,6 +161,17 @@
 
   50% {
     transform: translateY(-20px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 

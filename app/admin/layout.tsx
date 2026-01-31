@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { LayoutDashboard, BookOpen, HelpCircle, ArrowLeft, LogOut } from 'lucide-react';
+import ScrollButtons from '@/components/ScrollButtons'; // Import the component
 
 export default function AdminLayout({
     children,
@@ -75,6 +76,7 @@ export default function AdminLayout({
                     {children}
                 </main>
             </div>
+            <ScrollButtons /> {/* Add the component here */}
         </div>
     );
 }

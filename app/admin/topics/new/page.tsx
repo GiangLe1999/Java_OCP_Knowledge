@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, Plus, Trash2 } from 'lucide-react';
+import { Save, Trash2 } from 'lucide-react';
 import CodeEditor from '@/components/CodeEditor';
 import ParentTopicSearch from '@/components/ParentTopicSearch';
 import MarkdownTextarea from '@/components/MarkdownTextarea';
@@ -190,59 +190,63 @@ export default function NewTopicPage() {
 
                 {/* Content Blocks */}
                 <div>
-                    <div className="flex items-center justify-between mb-4">
-                        <label className="block text-sm font-medium">Content *</label>
-                        <div className="flex gap-2">
-                            <button
-                                type="button"
-                                onClick={() => addContentBlock('text')}
-                                className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm"
-                            >
-                                + Text Block
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => addContentBlock('code')}
-                                className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm"
-                            >
-                                + Code Block
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="space-y-4">
-                        {contentBlocks.map((block, index) => (
-                            <div key={index} className="card">
-                                <div className="flex items-center justify-between mb-3">
-                                    <span className="text-sm font-medium text-gray-400">
-                                        {block.type === 'text' ? '📝 Text' : '💻 Code'}
-                                    </span>
+                    <label className="block text-sm font-medium mb-2">Content *</label>
+                    <div className="h-[75vh] overflow-y-auto rounded-lg border border-gray-700 bg-gray-900/50">
+                        <div className="sticky top-0 bg-gray-800 z-10 p-3 border-b border-gray-700">
+                            <div className="flex items-center justify-end">
+                                <div className="flex gap-2">
                                     <button
                                         type="button"
-                                        onClick={() => removeContentBlock(index)}
-                                        className="text-red-400 hover:text-red-300"
+                                        onClick={() => addContentBlock('text')}
+                                        className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm"
                                     >
-                                        <Trash2 size={18} />
+                                        + Text Block
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => addContentBlock('code')}
+                                        className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm"
+                                    >
+                                        + Code Block
                                     </button>
                                 </div>
-
-                                {block.type === 'text' ? (
-                                    <MarkdownTextarea
-                                        value={block.value}
-                                        onChange={(val) => updateContentBlock(index, val)}
-                                        rows={4}
-                                        placeholder="Paste từ Word/Docs và giữ nguyên format..."
-                                    />
-                                ) : (
-                                    <CodeEditor
-                                        value={block.value}
-                                        onChange={(val) => updateContentBlock(index, val || '')}
-                                        language="java"
-                                        height="200px"
-                                    />
-                                )}
                             </div>
-                        ))}
+                        </div>
+
+                        <div className="space-y-4 p-4">
+                            {contentBlocks.map((block, index) => (
+                                <div key={index} className="card">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="text-sm font-medium text-gray-400">
+                                            {block.type === 'text' ? '📝 Text' : '💻 Code'}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            onClick={() => removeContentBlock(index)}
+                                            className="text-red-400 hover:text-red-300"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                    </div>
+
+                                    {block.type === 'text' ? (
+                                        <MarkdownTextarea
+                                            value={block.value}
+                                            onChange={(val) => updateContentBlock(index, val)}
+                                            rows={4}
+                                            placeholder="Paste từ Word/Docs và giữ nguyên format..."
+                                        />
+                                    ) : (
+                                        <CodeEditor
+                                            value={block.value}
+                                            onChange={(val) => updateContentBlock(index, val || '')}
+                                            language="java"
+                                            height="200px"
+                                        />
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
