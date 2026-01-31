@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-family-sans: 'Inter', sans-serif;
-  --font-family-mono: 'JetBrains Mono', monospace;
+  --font-family-sans: "Inter", sans-serif;
+  --font-family-mono: "JetBrains Mono", monospace;
 }
 
 @layer base {
@@ -59,7 +59,11 @@
   }
 
   .card-gradient {
-    background: linear-gradient(to bottom right, rgb(17 24 39 / 0.9), rgb(31 41 55 / 0.9));
+    background: linear-gradient(
+      to bottom right,
+      rgb(17 24 39 / 0.9),
+      rgb(31 41 55 / 0.9)
+    );
     backdrop-filter: blur(12px);
     border: 1px solid rgb(55 65 81);
     border-radius: 0.75rem;
@@ -112,7 +116,12 @@
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-    background-image: linear-gradient(to right, rgb(96 165 250), rgb(192 132 252), rgb(251 113 133));
+    background-image: linear-gradient(
+      to right,
+      rgb(96 165 250),
+      rgb(192 132 252),
+      rgb(251 113 133)
+    );
   }
 
   .animate-float {
@@ -141,7 +150,6 @@
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0px);
@@ -177,7 +185,7 @@ code {
   font-size: 14px;
   display: inline-block;
   padding: 0;
-  line-height: 0.8;
+  line-height: 1.8;
   background-color: transparent;
   overflow-x: unset;
 }
@@ -186,4 +194,16 @@ pre code {
   display: block;
   padding: 1rem;
   overflow-x: auto;
+}
+
+blockquote > p {
+  margin-bottom: 0;
+}
+
+li > ul {
+  margin-top: 0.6rem;
+}
+
+hr {
+  margin-bottom: 1rem !important;
 }

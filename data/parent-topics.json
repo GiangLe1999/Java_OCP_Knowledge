@@ -27,6 +27,34 @@
       "description": "",
       "id": "parent-1769440863595",
       "createdAt": "2026-01-26T15:21:03.595Z"
+    },
+    {
+      "title": "Enum",
+      "category": "class-design",
+      "description": "",
+      "id": "parent-1769481117197",
+      "createdAt": "2026-01-27T02:31:57.197Z"
+    },
+    {
+      "title": "Abstract Class",
+      "category": "class-design",
+      "description": "",
+      "id": "parent-1769485839497",
+      "createdAt": "2026-01-27T03:50:39.497Z"
+    },
+    {
+      "title": "Lambda Expression",
+      "category": "functional-streams",
+      "description": "",
+      "id": "parent-1769487867272",
+      "createdAt": "2026-01-27T04:24:27.272Z"
+    },
+    {
+      "title": "Functional Interface",
+      "category": "functional-streams",
+      "description": "",
+      "id": "parent-1769565911325",
+      "createdAt": "2026-01-28T02:05:11.325Z"
     }
   ]
 }

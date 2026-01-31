@@ -83,7 +83,8 @@
       "updatedAt": "2026-01-26T08:30:52.718Z"
     },
     {
-      "title": "Khi khai báo một sealed class, các lớp được phép kế thừa (listed in permits) phải nằm cùng package trừ khi đang sử dụng sealed class trong module system",
+      "id": "topic-1769416444125",
+      "title": "Khi khai báo một sealed class, các lớp được phép kế thừa (listed in permits) phải nằm cùng package với Sealed Class, trừ khi đang sử dụng Sealed Class trong module system",
       "category": "class-design",
       "parentTopicId": "parent-1769414182386",
       "parentTopicTitle": "Lớp Sealed",
@@ -94,19 +95,17 @@
         },
         {
           "type": "code",
-          "value": "package com.example.shapes;\r\n\r\npublic sealed class Shape permits Circle, Rectangle {}\r\n→ Lớp Circle và Rectangle phải ở trong package com.example.shapes.\r\n"
+          "value": "package com.example.shapes;\r\n\r\npublic sealed class Shape permits Circle, Rectangle {}\r\n\r\nfinal class Circle extends Shape {}\r\nfinal class Rectangle extends Shape {}\r\n\r\n"
         },
         {
           "type": "text",
-          "value": "Khi có permits, nếu hai lớp này nằm trong hai package khác nhau, code sẽ không biên dịch!"
+          "value": "→ Lớp `Circle` và `Rectangle` phải ở trong package `com.example.shapes`. \n\nNếu `Circle` nằm ở package khác → **compile error**."
         }
       ],
       "keywords": [
         "Lớp Sealed"
       ],
-      "id": "topic-1769416444125",
-      "createdAt": "2026-01-26T08:34:04.125Z",
-      "updatedAt": "2026-01-26T08:34:04.125Z"
+      "updatedAt": "2026-01-31T02:10:00.216Z"
     },
     {
       "id": "topic-1769416673046",
@@ -406,6 +405,916 @@
         "POJO"
       ],
       "updatedAt": "2026-01-26T15:43:54.829Z"
+    },
+    {
+      "title": "Record không có setter. Mọi trường đều mặc định là final và không thể thay đổi sau khi đã được ghi trong constructor",
+      "category": "class-design",
+      "parentTopicId": "parent-1769421007314",
+      "parentTopicTitle": "Record",
+      "content": [
+        {
+          "type": "text",
+          "value": "Để thay đổi một record, phải tạo một đối tượng mới và sao chép tất cả dữ liệu muốn giữ lại."
+        },
+        {
+          "type": "code",
+          "value": "var cousin = new Crane(3, \"Jenny\");\r\nvar friend = new Crane(cousin.numberEggs(), \"Janeice\");\r\n"
+        }
+      ],
+      "keywords": [
+        "Record"
+      ],
+      "id": "topic-1769478378623",
+      "createdAt": "2026-01-27T01:46:18.623Z",
+      "updatedAt": "2026-01-27T01:46:18.623Z"
+    },
+    {
+      "title": "Record cũng ngầm định là final, do đó từ khóa final có thể có hay không đều được",
+      "category": "class-design",
+      "parentTopicId": "parent-1769421007314",
+      "parentTopicTitle": "Record",
+      "content": [
+        {
+          "type": "code",
+          "value": "public final record Crane(int numberEggs, String name) {}"
+        },
+        {
+          "type": "text",
+          "value": "Điều này có nghĩa là không thể kế thừa từ một record"
+        },
+        {
+          "type": "code",
+          "value": "public record BlueCrane() extends Crane {} // LỖI BIÊN DỊCH"
+        }
+      ],
+      "keywords": [
+        "Record"
+      ],
+      "id": "topic-1769478437426",
+      "createdAt": "2026-01-27T01:47:17.426Z",
+      "updatedAt": "2026-01-27T01:47:17.426Z"
+    },
+    {
+      "title": "Record có thể triển khai một Interface thông thường hoặc Sealed Interface, miễn là nó triển khai tất cả các phương thức trừu tượng",
+      "category": "class-design",
+      "parentTopicId": "parent-1769421007314",
+      "parentTopicTitle": "Record",
+      "content": [
+        {
+          "type": "code",
+          "value": "public interface Bird {}\r\npublic record Crane(int numberEggs, String name) implements Bird {}"
+        }
+      ],
+      "keywords": [
+        "Record",
+        "Sealed Interface"
+      ],
+      "id": "topic-1769478534311",
+      "createdAt": "2026-01-27T01:48:54.311Z",
+      "updatedAt": "2026-01-27T01:48:54.311Z"
+    },
+    {
+      "id": "topic-1769478701974",
+      "title": "Có thể tự định nghĩa Constructor cho Records",
+      "category": "class-design",
+      "parentTopicId": "parent-1769421007314",
+      "parentTopicTitle": "Record",
+      "content": [
+        {
+          "type": "text",
+          "value": "**Constructor của Record có 2 cách định nghĩa là: Constructor dài hoặc Constructor ngắn**\n\n***Constructor dài (Long Constructor): Phải gán giá trị thủ công cho đủ các fields***\n- Giống constructor thông thường, khai báo đầy đủ tham số\n- Phải gán giá trị cho tất cả các trường (vì chúng là `final`)\n- Thích hợp khi có ít trường cần kiểm tra"
+        },
+        {
+          "type": "code",
+          "value": "public record Crane(int numberEggs, String name) {\r\n    public Crane(int numberEggs, String name) {\r\n        if (numberEggs < 0) throw new IllegalArgumentException();\r\n        this.numberEggs = numberEggs;\r\n        this.name = name;\r\n    }\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "Lưu ý khi dùng loại long constructor, **phải tự gán thủ công** cho đầy đủ tất cả các field (`this.fieldName = ...`), hoặc gọi canonical constructor với `this(...)`, nếu không sẽ bị lỗi biên dịch."
+        },
+        {
+          "type": "code",
+          "value": "record Person(String name, int age) {\r\n    Person(String name) {\r\n        this(name, 0); // Gọi canonical constructor để gán đủ field tránh lỗi biên dịch\r\n    }\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "Record cấm gán field trực tiếp trong constructor không-canonical nên cách làm dưới đây vẫn sẽ gây lỗi biên dịch\n`record Person(String name, int age) {Person(String name) {this.name = name; this.age = 10;}} // Lỗi biên dịch`\n\n***Constructor ngắn gọn (Compact Constructor – không có cặp dấu ngoặc đơn): Không cần gán giá trị thủ công cho các fields***\n\n- Không khai báo tham số\n- Java tự động gán giá trị sau khi constructor chạy\n- Thích hợp khi có nhiều trường (tránh boilerplate code)"
+        },
+        {
+          "type": "code",
+          "value": "public record Crane(int numberEggs, String name) {\r\n    public Crane { // Không có dấu ngoặc đơn\r\n        if (numberEggs < 0) throw new IllegalArgumentException();\r\n        // Không cần gán giá trị thủ công\r\n    }\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "- Ưu điểm chính của loại constructor này là giảm code boilerplate, nhưng vẫn cho phép kiểm tra điều kiện khi cần.\n- Trong **constructor compact** của record Java, có thể **kiểm tra và biến đổi tham số đầu vào** trước khi chúng được gán vào các trường (fields) của record."
+        },
+        {
+          "type": "code",
+          "value": "public record Crane(int numberEggs, String name) {\r\n    public Crane { // Constructor compact\r\n        if (name == null || name.trim().isEmpty()) {\r\n            throw new IllegalArgumentException(\"Tên không được trống!\");\r\n        }\r\n        name = name.substring(0, 1).toUpperCase()  // Viết hoa chữ đầu\r\n             + name.substring(1).toLowerCase();     // Viết thường phần còn lại\r\n    }\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "→ Khi gọi `new Crane(5, \"jOHN\")`, name sẽ được chuyển thành \"John\" trước khi gán vào record.\n\n- Trong constructor compact, không thể gán trực tiếp cho field bằng this.field vì sẽ gây lỗi biên dịch"
+        },
+        {
+          "type": "code",
+          "value": "public Crane {\r\n    this.numberEggs = 10; // Lỗi biên dịch!\r\n}\r\n"
+        }
+      ],
+      "keywords": [
+        "Record"
+      ],
+      "updatedAt": "2026-01-31T02:39:04.175Z"
+    },
+    {
+      "title": "Encapsulation được đảm bảo khi các fields (cả static fields và instance fields) không thể truy cập trực tiếp từ bên ngoài. Việc truy cập dữ liệu phải được thực hiện thông qua phương thức (getter/setter hoặc method khác)",
+      "category": "oop-basics",
+      "parentTopicId": "parent-1769440863595",
+      "parentTopicTitle": "Encapsulation",
+      "content": [
+        {
+          "type": "text",
+          "value": "Tức là các fields phải có access modifier là:\n\n-   private\n-   hoặc protected (giới hạn access)\n-   hoặc *ít nhất* là package-private (giới hạn trong package)\n\n**Nhưng tốt nhất là private.**\n\n- Việc truy cập, cập nhật dữ liệu chỉ được thực hiện thông qua getter, setter"
+        },
+        {
+          "type": "code",
+          "value": "public class User {\r\n    private int age;\r\n\r\n    public int getAge() { return age; }\r\n    public void setAge(int age) {\r\n        if (age < 0) throw new IllegalArgumentException(\"Invalid age\");\r\n        this.age = age;\r\n    }\r\n}\r\n"
+        }
+      ],
+      "keywords": [],
+      "id": "topic-1769480901460",
+      "createdAt": "2026-01-27T02:28:21.460Z",
+      "updatedAt": "2026-01-27T02:28:21.460Z"
+    },
+    {
+      "title": "Các hàm getter, setter không bắt buộc phải tuân theo naming convention getXxx() hay setXxx() để đảm bảo tính Encapsulation",
+      "category": "oop-basics",
+      "parentTopicId": "parent-1769440863595",
+      "parentTopicTitle": "Encapsulation",
+      "content": [
+        {
+          "type": "text",
+          "value": ""
+        }
+      ],
+      "keywords": [
+        "Encapsulation"
+      ],
+      "id": "topic-1769481050692",
+      "createdAt": "2026-01-27T02:30:50.692Z",
+      "updatedAt": "2026-01-27T02:30:50.692Z"
+    },
+    {
+      "title": "Encapsulation không quan tâm tới access modifier của các hàm nội bộ là gì",
+      "category": "oop-basics",
+      "parentTopicId": "parent-1769440863595",
+      "parentTopicTitle": "Encapsulation",
+      "content": [
+        {
+          "type": "text",
+          "value": ""
+        }
+      ],
+      "keywords": [
+        "Encapsulation"
+      ],
+      "id": "topic-1769481066004",
+      "createdAt": "2026-01-27T02:31:06.004Z",
+      "updatedAt": "2026-01-27T02:31:06.004Z"
+    },
+    {
+      "id": "topic-1769481107681",
+      "title": "Trong Enum, Enum constants luôn đứng đầu, không được đặt sau field / method / constructor, nếu các enum constants không ở đầu → chắc chắn compile error",
+      "category": "class-design",
+      "parentTopicId": "parent-1769481117197",
+      "parentTopicTitle": "Enum",
+      "content": [
+        {
+          "type": "code",
+          "value": "enum Season {\r\n\r\n    SPRING(\"Spring\"),\r\n    SUMMER(\"Summer\"),\r\n    AUTUMN(\"Autumn\"),\r\n    WINTER(\"Winter\");\r\n\r\n    private final String displayName;\r\n\r\n    Season(String displayName) {\r\n        this.displayName = displayName;\r\n    }\r\n\r\n    public String getDisplayName() {\r\n        return displayName;\r\n    }\r\n}\r\n"
+        }
+      ],
+      "keywords": [
+        "Enum"
+      ],
+      "updatedAt": "2026-01-27T02:33:47.187Z"
+    },
+    {
+      "id": "topic-1769481627921",
+      "title": "Các instance field trong Enum không bắt buộc private final, nhưng gần như luôn phải dùng private final. Vì Enum constant là singleton, mỗi enum constant chỉ có 1 instance duy nhất, nếu field không final, giá trị có thể bị thay đổi → phá vỡ tính bất biến",
+      "category": "class-design",
+      "parentTopicId": "parent-1769481117197",
+      "parentTopicTitle": "Enum",
+      "content": [
+        {
+          "type": "code",
+          "value": "public enum Status {\r\n    ACTIVE,\r\n    INACTIVE\r\n}"
+        },
+        {
+          "type": "text",
+          "value": "Về bản chất, **enum constant chính là singleton**. Mỗi enum constant (`ACTIVE`, `INACTIVE`) là **một instance duy nhất**. JVM đảm bảo:    \n\n    -   Không thể `new`        \n    -   Không thể clone        \n    -   Không thể deserialize thành instance khác\n        \n**Và vì sao field không `final` là cực kỳ nguy hiểm?**"
+        },
+        {
+          "type": "code",
+          "value": "public enum Status {\r\n    ACTIVE(1), INACTIVE(0);\r\n\r\n    private int code;\r\n\r\n    Status(int code) {\r\n        this.code = code;\r\n    }\r\n\r\n    public void setCode(int code) {\r\n        this.code = code;\r\n    }\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "Vấn đề:\n\n-   `Status.ACTIVE` là **1 instance duy nhất**\n-   Nếu **một chỗ nào đó** gọi:\n\n"
+        },
+        {
+          "type": "code",
+          "value": "Status.ACTIVE.setCode(999);\r\n"
+        },
+        {
+          "type": "text",
+          "value": "→ Tất cả chương trình **đều thấy giá trị bị đổi**\n\nĐây là **shared mutable state** — nguồn gốc của:\n\n-   Bug khó trace\n-   Race condition\n-   Hành vi không đoán trước được"
+        }
+      ],
+      "keywords": [
+        "Enum"
+      ],
+      "updatedAt": "2026-01-31T03:20:29.468Z"
+    },
+    {
+      "id": "topic-1769483559925",
+      "title": "Constructor của enum luôn là private (ngầm định). Dù Enum có thể có nhiều phiên bản overload của constructor, nhưng Enum constant chỉ được phép gọi constructor, không có quyền định nghĩa constructor riêng hay override lại construct của Enum",
+      "category": "class-design",
+      "parentTopicId": "parent-1769481117197",
+      "parentTopicTitle": "Enum",
+      "content": [
+        {
+          "type": "text",
+          "value": "-   Enum **có thể khai báo nhiều constructor overload**\n-   Nhưng **mọi enum constant đều phải đi qua constructor của enum**    \n-   Và **constructor enum luôn là `private` (ngầm định)**"
+        },
+        {
+          "type": "code",
+          "value": "enum Color {\r\n    RED(255),\r\n    BLUE(0);\r\n\r\n    private final int rgb;\r\n\r\n    Color(int rgb) {          // constructor #1\r\n        this.rgb = rgb;\r\n    }\r\n}"
+        },
+        {
+          "type": "text",
+          "value": "Bạn **không thể viết constructor khác nhau cho từng enum constant**"
+        },
+        {
+          "type": "code",
+          "value": "enum Color {\r\n    RED() {\r\n        Color() { } // ❌ không tồn tại\r\n    },\r\n    BLUE() {\r\n        Color() { } // ❌\r\n    };\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "Enum constant **không phải subclass** để override constructor."
+        }
+      ],
+      "keywords": [
+        "Enum"
+      ],
+      "updatedAt": "2026-01-31T03:25:37.554Z"
+    },
+    {
+      "id": "topic-1769483780136",
+      "title": "Thực chất, Compiler sẽ dịch enum thành class + static final instances",
+      "category": "class-design",
+      "parentTopicId": "parent-1769481117197",
+      "parentTopicTitle": "Enum",
+      "content": [
+        {
+          "type": "code",
+          "value": "enum Color {\r\n    RED(255),\r\n    BLUE(0);\r\n}"
+        },
+        {
+          "type": "text",
+          "value": "≈ (conceptually):"
+        },
+        {
+          "type": "code",
+          "value": "final class Color extends Enum<Color> {\r\n    public static final Color RED  = new Color(\"RED\", 0, 255);\r\n    public static final Color BLUE = new Color(\"BLUE\", 1, 0);\r\n\r\n    private final int rgb;\r\n\r\n    private Color(String name, int ordinal, int rgb) {\r\n        super(name, ordinal);\r\n        this.rgb = rgb;\r\n    }\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "Còn khi enum constant có **constant-specific class body**:"
+        },
+        {
+          "type": "code",
+          "value": "enum Color {\r\n    RED(255) {\r\n        @Override\r\n        int intensity() {\r\n            return 100;\r\n        }\r\n    },\r\n    BLUE(0) {\r\n        @Override\r\n        int intensity() {\r\n            return 50;\r\n        }\r\n    };\r\n\r\n    private final int rgb;\r\n\r\n    Color(int rgb) {\r\n        this.rgb = rgb;\r\n    }\r\n\r\n    int intensity() {\r\n        return 0;\r\n    }\r\n}"
+        },
+        {
+          "type": "text",
+          "value": "Compiler sẽ làm (conceptually):"
+        },
+        {
+          "type": "code",
+          "value": "public static final Color RED  = new Color(\"RED\", 0, 255) {\r\n    @Override\r\n    int intensity() {\r\n        return 100;\r\n    }\r\n};\r\n\r\npublic static final Color BLUE = new Color(\"BLUE\", 1, 0) {\r\n    @Override\r\n    int intensity() {\r\n        return 50;\r\n    }\r\n};"
+        },
+        {
+          "type": "text",
+          "value": "Mỗi static final field sẽ tương đương như anonymous class instance"
+        }
+      ],
+      "keywords": [
+        "Enum"
+      ],
+      "updatedAt": "2026-01-27T03:42:18.566Z"
+    },
+    {
+      "id": "topic-1769484122943",
+      "title": "Tuy không thể override constructor nhưng các enum constant lại có thể override method được (cả concrete và abstract method)",
+      "category": "class-design",
+      "parentTopicId": "parent-1769481117197",
+      "parentTopicTitle": "Enum",
+      "content": [
+        {
+          "type": "code",
+          "value": "enum Transport {\r\n    CAR {\r\n        @Override\r\n        public int speed() {\r\n            return 120;\r\n        }\r\n    },\r\n    BIKE; // không override → dùng implementation mặc định\r\n    public int speed() {\r\n        return 60;\r\n    }\r\n}"
+        }
+      ],
+      "keywords": [
+        "Enum"
+      ],
+      "updatedAt": "2026-01-27T03:22:22.567Z"
+    },
+    {
+      "title": "Nếu trong enum có khai báo phương thức abstract, thì tất cả các hằng số enum phải override phương thức đó, trừ khi enum cung cấp một implementation mặc định cho phương thức",
+      "category": "class-design",
+      "parentTopicId": "parent-1769481117197",
+      "parentTopicTitle": "Enum",
+      "content": [
+        {
+          "type": "text",
+          "value": "**Hoặc** mỗi constant override `isHealthy()`:"
+        },
+        {
+          "type": "code",
+          "value": "enum FOOD {\r\n    BERRIES {\r\n        public boolean isHealthy() { return true; }\r\n    },\r\n    INSECTS {\r\n        public boolean isHealthy() { return true; }\r\n    },\r\n    FISH {\r\n        public boolean isHealthy() { return true; }\r\n    },\r\n    ROOTS {\r\n        public boolean isHealthy() { return true; }\r\n    },\r\n    COOKIES {\r\n        public boolean isHealthy() { return false; }\r\n    },\r\n    HONEY {\r\n        public boolean isHealthy() { return true; }\r\n    };\r\n\r\n    public abstract boolean isHealthy();\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "**Hoặc** bỏ abstract method, dùng default implementation:"
+        },
+        {
+          "type": "code",
+          "value": "enum FOOD {\r\n    BERRIES, INSECTS, FISH, ROOTS, COOKIES, HONEY;\r\n\r\n    public boolean isHealthy() {\r\n        return this != COOKIES; // ví dụ: cookies là không healthy\r\n    }\r\n}\r\n"
+        }
+      ],
+      "keywords": [
+        "enum"
+      ],
+      "id": "topic-1769485523756",
+      "createdAt": "2026-01-27T03:45:23.756Z",
+      "updatedAt": "2026-01-27T03:45:23.756Z"
+    },
+    {
+      "title": "Nếu trong enum, phương thức không phải abstract (non-abstract), thì vẫn có thể override nó cho từng hằng số enum thông qua constant-specific class body, nhưng không bắt buộc cho tất cả",
+      "category": "class-design",
+      "parentTopicId": "parent-1769481117197",
+      "parentTopicTitle": "Enum",
+      "content": [
+        {
+          "type": "text",
+          "value": "-   **Abstract method** → tất cả constants **bắt buộc** override (trừ khi enum cung cấp implementation mặc định trước, lúc đó không còn abstract nữa).\n-   **Non-abstract method** → constants **tùy chọn** override.\n-   Constants không override sẽ dùng implementation mặc định ở cấp enum."
+        },
+        {
+          "type": "code",
+          "value": "enum Greeting {\r\n    FORMAL {\r\n        @Override\r\n        public String sayHello(String name) {\r\n            return \"Good day, \" + name + \".\";\r\n        }\r\n    },\r\n    DEFAULT; // Không override → dùng phương thức mặc định\r\n\r\n    // Non-abstract method (mặc định)\r\n    public String sayHello(String name) {\r\n        return \"Hello \" + name;\r\n    }\r\n}\r\n\r\npublic class Test {\r\n    public static void main(String[] args) {\r\n        System.out.println(Greeting.FORMAL.sayHello(\"Alice\"));   // Good day, Alice.\r\n        System.out.println(Greeting.DEFAULT.sayHello(\"Charlie\")); // Hello Charlie\r\n    }\r\n}\r\n"
+        }
+      ],
+      "keywords": [
+        "Enum"
+      ],
+      "id": "topic-1769485647044",
+      "createdAt": "2026-01-27T03:47:27.044Z",
+      "updatedAt": "2026-01-27T03:47:27.044Z"
+    },
+    {
+      "id": "topic-1769485796734",
+      "title": "Vẫn sẽ tồn tai trường hợp mà abstract đi với private hợp lệ (abstract private class)",
+      "category": "class-design",
+      "parentTopicId": "parent-1769485839497",
+      "parentTopicTitle": "Abstract Class",
+      "content": [
+        {
+          "type": "code",
+          "value": "abstract class Elephant {  \r\n    abstract private class SleepsAlot {  \r\n        abstract int sleep();  \r\n    }  \r\n}"
+        },
+        {
+          "type": "text",
+          "value": "- Cú pháp `abstract private class Element` ở outer level sẽ gây lỗi biên dịch\n- Tuy nhiên tại inner class (nested class) được định nghĩa bên trong một outer class, việc abstract đi cùng với private là chấp nhận được.\n- Ở đây private nghĩa là chỉ outer class mới truy cập được inner class đó.\n- Hai modifier này không xung đột:\n    - `private` → giới hạn ai được thấy class này (chỉ outer class).\n    - `abstract` → bắt buộc subclass (nằm bên trong outer class hoặc nằm ở chỗ nào có quyền truy cập) phải implement."
+        }
+      ],
+      "keywords": [
+        "Abstract Class"
+      ],
+      "updatedAt": "2026-01-31T03:33:40.903Z"
+    },
+    {
+      "id": "topic-1769487867295",
+      "title": "Lambda expression = một instance (đối tượng) của Functional Interface",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "text",
+          "value": "Ví dụ: `Runnable r = () -> System.out.println(\"Hello\");`\n\n**Ngay khi compile**, Java coi lambda là:"
+        },
+        {
+          "type": "code",
+          "value": "Runnable r = new Runnable() {\r\n    @Override\r\n    public void run() {\r\n        System.out.println(\"Hello\");\r\n    }\r\n};\r\n"
+        },
+        {
+          "type": "text",
+          "value": "**Lambda chính là object của interface** `Runnable`"
+        }
+      ],
+      "keywords": [
+        "Lambda Expression"
+      ],
+      "updatedAt": "2026-01-27T04:25:43.483Z"
+    },
+    {
+      "id": "topic-1769565295452",
+      "title": "s -> {} là một lambda hợp lệ",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "code",
+          "value": "Consumer<String> c = s -> {};"
+        },
+        {
+          "type": "text",
+          "value": "- Body là block rỗng\n- Không có statement → không cần return\n- Không có gì để kết thúc bên trong → không cần ; bên trong"
+        }
+      ],
+      "keywords": [
+        "Lambda Expression"
+      ],
+      "updatedAt": "2026-01-31T03:38:54.024Z"
+    },
+    {
+      "title": "Khởi tạo đối tượng bằng cách sử dụng var ở vế trái và sử dụng lambda ở vế phải sẽ gây lỗi biên dịch",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "code",
+          "value": "var x = () -> System.out.println(\"Hello\"); // KHÔNG BIÊN DỊCH"
+        },
+        {
+          "type": "text",
+          "value": "Trong khi var cần suy luận kiểu dựa vào giá trị từ vế phải, mà Lambda expression bản thân **không có kiểu riêng biệt.**\n\n-> Lỗi biên dịch\n\nĐể khắc phục lỗi, phải chỉ định rõ kiểu của functional interface:"
+        },
+        {
+          "type": "code",
+          "value": "Runnable r = () -> System.out.println(\"Hello\");"
+        },
+        {
+          "type": "text",
+          "value": "Hoặc dùng cast tường minh ở vế phải để giúp compiler suy luận kiểu cho var ở vế trái:"
+        },
+        {
+          "type": "code",
+          "value": "var r = (Runnable) () -> System.out.println(\"Hello\");"
+        }
+      ],
+      "keywords": [
+        "Lambda Expression"
+      ],
+      "id": "topic-1769565538928",
+      "createdAt": "2026-01-28T01:58:58.928Z",
+      "updatedAt": "2026-01-28T01:58:58.928Z"
+    },
+    {
+      "id": "topic-1769565610805",
+      "title": "@FunctionalInterface thông báo cho trình biên dịch rằng bạn dự định interface này sẽ là functional interface. Nếu interface không tuân thủ quy tắc functional interface, trình biên dịch sẽ báo lỗi biên dịch",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "code",
+          "value": "@FunctionalInterface\r\npublic interface Dance { // DOES NOT COMPILE\r\n    void move();\r\n    void rest();\r\n}\r\n"
+        }
+      ],
+      "keywords": [
+        "Functional Interface"
+      ],
+      "updatedAt": "2026-01-28T02:06:34.841Z"
+    },
+    {
+      "id": "topic-1769565666456",
+      "title": "Functional interface chỉ có đúng 1 phương thức trừu tượng",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "code",
+          "value": "@FunctionalInterface\r\npublic interface Sprint {\r\n    public void sprint(int speed);\r\n}\r\npublic interface Dash extends Sprint {}\r\n\r\npublic interface Skip extends Sprint {\r\n    void skip();\r\n}\r\n\r\npublic interface Sleep {\r\n    private void snore() {}\r\n    default int getZzz() { return 1; }\r\n}\r\n\r\npublic interface Climb {\r\n    void reach();\r\n    default void fall() {}\r\n    static int getBackUp() { return 100; }\r\n    private static boolean checkHeight() { return true; }\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "- `Dash` là functional interface vì nó **kế thừa** `Sprint` và được thừa hưởng **một phương thức trừu tượng duy nhất** là `sprint()`.\n- `Skip` **không** phải functional interface vì nó có **hai** phương thức trừu tượng: `sprint()` kế thừa và `skip()` được khai báo mới.\n- `Sleep` **không** phải functional interface. `snore()` là private (không phải abstract), `getZzz()` là default method - cả hai đều không tính là abstract method.\n- `Climb` là functional interface. Dù có nhiều phương thức khác (`default`, `static`, `private static`), nó chỉ có **một abstract method** là `reach()`."
+        }
+      ],
+      "keywords": [
+        "Functional Interface"
+      ],
+      "updatedAt": "2026-01-28T02:06:22.383Z"
+    },
+    {
+      "id": "topic-1769565911352",
+      "title": "Functional interface chỉ được phép có một abstract method nhưng các phương thức từ Object không tính vào số này, ngay cả khi bạn viết lại trong interface",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "text",
+          "value": "Trong Java, nếu một **functional interface** khai báo (hay kế thừa) một phương thức trừu tượng có cùng **chữ ký** với phương thức `public` trong lớp `Object` (ví dụ: `equals()`, `hashCode()`, `toString()`), thì **phương thức đó không được tính** vào số lượng abstract methods khi xác định đây có phải là functional interface hay không."
+        },
+        {
+          "type": "code",
+          "value": "@FunctionalInterface\r\npublic interface MyFunc {\r\n    void doSomething();\r\n\r\n    boolean equals(Object obj);  // giống Object -> không tính\r\n    int hashCode();              // giống Object -> không tính\r\n}\r\n"
+        },
+        {
+          "type": "text",
+          "value": "Lý do là vì trong Java, mọi interface đều ngầm định kế thừa từ `Object`. Các phương thức của `Object` như\n\n- `equals(Object obj)`\n- `hashCode()`\n- `toString()`\n\nLà các phương thức đã **mặc định có mặt** trong mọi interface, ngay cả khi bạn không khai báo.\n\nNếu compiler **tính cả những method đó** vào số lượng abstract method thì mọi interface sẽ **luôn có ít nhất 4 abstract methods** (`equals`, `hashCode`, `toString`, cộng thêm các method khác bạn định nghĩa).\n\nĐiều đó sẽ khiến **không interface nào có thể trở thành functional interface** theo định nghĩa (chỉ được phép có đúng 1 abstract method)."
+        }
+      ],
+      "keywords": [
+        "Functional Interface"
+      ],
+      "updatedAt": "2026-01-28T02:21:01.533Z"
+    },
+    {
+      "id": "topic-1769566965383",
+      "title": "Lambda có thể viết dưới dạng Method Reference nếu: Biểu thức lambda chỉ gọi lại một phương thức đã tồn tại (mà không thay đổi đối số hay logic) và danh sách tham số của lambda khớp với tham số của method",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "text",
+          "value": "***Điều kiện 1: Thân lambda chỉ có 1 lời gọi phương thức và phương thức đó là phương thức có sẵn***\n\nPhương thức có sẵn (đã tồn tại) nghĩa là **một method đã được định nghĩa sẵn ở đâu đó**, *trước khi* bạn viết lambda - có thể là:\n\n-   Method trong **class khác**   \n-   Method **static**\n-   Method **instance**    \n-   Method **constructor**    \n-   Method có sẵn trong **JDK** (`String::length`, `System.out::println`, …)\n    \nTóm lại là **không phải** logic được viết inline trong lambda.\n\n**Inline** nghĩa là **tự viết logic trực tiếp ngay bên trong lambda**, thay vì chỉ gọi lại **một method có sẵn**. Hay có thể hiểu **Inline logic = lambda có xử lý, biến đổi, tính toán, ghép nhiều thao tác**."
+        },
+        {
+          "type": "code",
+          "value": "list.forEach(x -> {\r\n    System.out.println(x.toUpperCase());\r\n});\r\n// Không phải method có sẵn"
+        },
+        {
+          "type": "text",
+          "value": "Phương thức trong phần thân lambda không phải “phương thức có sẵn”. Vì:\n\n-   `toUpperCase()` là method có sẵn    \n-   **nhưng bạn đang thêm logic mới** (`println + toUpperCase`)\n\nDo đó **không thể** viết thành method reference.\n\n***Điều kiện 2: danh sách tham số của lambda khớp với tham số của method***\n\nKhi bạn có 1 lambda: `(a, b, c) -> someMethod(a, b, c)`\n\nCó thể thấy:\n\n-  **Danh sách tham số của lambda**: `(a, b, c)`\n-  **Danh sách tham số của method**: `someMethod(a, b, c)`\n    \n“Khớp” nghĩa là:\n> Các tham số của lambda được **truyền thẳng** vào method. Không đổi thứ tự, không bỏ bớt, không thêm logic xử lý trung gian.\n\nHoặc trong trường hợp gọi method của object: `s -> s.length()`\n\n-   `s` không phải là tham số của method `length()`\n-   Nhưng `s` chính là **đối tượng gọi method** → vẫn được coi là “khớp”\n\nĐoạn code lambda dưới đây hoạt động bình thường nhưng có sự **dư thừa** khi mà lambda chỉ nhận một tham số `s` rồi truyền thẳng vào `System.out.println(s)`."
+        },
+        {
+          "type": "code",
+          "value": "LearnToSpeak learner = s -> System.out.println(s);"
+        },
+        {
+          "type": "text",
+          "value": "Chúng ta có thể viết gọn bằng **method reference**:"
+        },
+        {
+          "type": "code",
+          "value": "LearnToSpeak learner = System.out::println; \r\n// System.out là 1 instance và println là method của instance đó"
+        },
+        {
+          "type": "text",
+          "value": "Cách triển khai method reference như sau:\n| Loại | Cú pháp | Ví dụ lambda tương đương | Ghi chú |\n|------|--------|--------------------------|--------|\n| Static method | `ClassName::staticMethod` | `(args) -> ClassName.staticMethod(args)` | Gọi phương thức tĩnh |\n| Instance method của đối tượng cụ thể | `instance::instanceMethod` | `(args) -> instance.instanceMethod(args)` | Dùng khi có sẵn một đối tượng cụ thể |\n| Instance method của đối tượng được truyền vào | `ClassName::instanceMethod` | `(obj, args) -> obj.instanceMethod(args)` | Khi đối tượng gọi method chính là đối số đầu tiên |\n| Constructor reference | `ClassName::new` | `() -> new ClassName()` hoặc `(arg) -> new ClassName(arg)` | Tạo đối tượng mới |"
+        }
+      ],
+      "keywords": [
+        "Lambda Expression",
+        "Method Reference"
+      ],
+      "updatedAt": "2026-01-31T03:49:49.971Z"
+    },
+    {
+      "id": "topic-1769571268812",
+      "title": "Method reference thực chất là lambda đã lược bỏ tên biến, giữ lại đúng “chủ thể gọi method” và “tên method”",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "text",
+          "value": "Khi chuyển một biểu thức lambda sang method reference,  **hãy quan sát chủ thể đứng bên trái dấu chấm (.) trong lời gọi method của lambda**.\n\nChủ thể đó chính là thành phần cần đặt **trước cặp dấu `::`** trong method reference.\n\n**1. Static method**\n\n`s -> Integer.parseInt(s)`\n\n-   Chủ thể gọi method: `Integer`    \n-   Đây là static method    \n\nMethod reference tương đương:\n\n`Integer::parseInt`\n\n**2. Instance method của một đối tượng cụ thể**\n\n`String myStr = \"hello\"; Consumer<String> c2 = s -> myStr.concat(s);`\n\n-   Chủ thể gọi method: `myStr`    \n-   Là một object cụ thể\n    \nMethod reference tương đương:\n\n`Consumer<String> c1 = myStr::concat;`\n\n\n**3. Instance method của đối tượng được truyền vào**\n\n`StringParameterChecker lambda = s -> s.isEmpty();`\n\n-   Chủ thể gọi method: `s`    \n-   Kiểu của `s` là `String`\n    \nMethod reference tương đương:\n\n`StringParameterChecker checker = String::isEmpty;`\n\n\n> **Method reference thực chất là lambda đã lược bỏ tên biến,  giữ lại đúng “chủ thể gọi method” và “tên method”.**"
+        }
+      ],
+      "keywords": [
+        "Lambda Expression",
+        "Method Reference"
+      ],
+      "updatedAt": "2026-01-28T03:46:11.286Z"
+    },
+    {
+      "id": "topic-1769572028416",
+      "title": "Cách sử dụng các functional Interface dựng sẵn (built-in function interface)",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "text",
+          "value": "| Functional interface | Return type | Method name | # Tham số |\n|----------------------|------------|-------------|-----------|\n| `Supplier<R>` | `R` | `get()` | Không |\n| `Consumer<T>` | `void` | `accept(T)` | `T` |\n| `BiConsumer<T, U>` | `void` | `accept(T, U)` | `T`, `U` |\n| `Predicate<T>` | `boolean` | `test(T)` | `T` |\n| `BiPredicate<T, U>` | `boolean` | `test(T, U)` | `T`, `U` |\n| `Function<T, R>` | `R` | `apply(T)` | `T` |\n| `BiFunction<T, U, R>` | `R` | `apply(T, U)` | `T`, `U` |\n| `UnaryOperator<T>` | `T` | `apply(T)` | `T` |\n| `BinaryOperator<T>` | `T` | `apply(T, T)` | `T`, `T` |\n"
+        }
+      ],
+      "keywords": [
+        "Functional Interface"
+      ],
+      "updatedAt": "2026-01-31T03:51:12.488Z"
+    },
+    {
+      "id": "topic-1769574735438",
+      "title": "Supplier<ArrayList<String>> s3 = ArrayList<String>::new; là cú pháp hợp lệ",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "text",
+          "value": "Tuy nhiên <String> vế phải là không bắt buộc: `Supplier<ArrayList<String>> s3 = ArrayList::new;`\n\nVì Java sẽ **suy luận kiểu** (type inference) từ khai báo biến s3. Khi biên dịch, `Supplier<ArrayList<String>>` đã nói rõ là ArrayList chứa String."
+        }
+      ],
+      "keywords": [
+        "Functional Interface"
+      ],
+      "updatedAt": "2026-01-28T04:33:02.575Z"
+    },
+    {
+      "id": "topic-1769575124767",
+      "title": "In kết quả của 1 Lambda Expression thì ouput có dạng \"tên của class lambda được JVM sinh ra tại runtime\" + \"hashCode của object\"",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "code",
+          "value": "Supplier<ArrayList<String>> s3 = ArrayList::new;"
+        },
+        {
+          "type": "text",
+          "value": "Nếu in trực tiếp `s3`: `System.out.println(s3);` Kết quả sẽ có dạng: `functionalinterface.BuiltIns$$Lambda$1/0x0000000800066840@4909b8da`\n\n- Điều này cho thấy lambda **tồn tại trong bộ nhớ khi chạy** (JVM runtime) và là một instance của functional interface\n- Nhưng **không tồn tại dưới dạng file** **.class riêng biệt** trên ổ đĩa."
+        }
+      ],
+      "keywords": [
+        "Functional Interface"
+      ],
+      "updatedAt": "2026-01-28T04:41:12.205Z"
+    },
+    {
+      "id": "topic-1769759344110",
+      "title": "Convenience Method trên các Functional Interface là các method giúp việc chỉnh sửa hoặc kết hợp các Functional Interface cùng loại trở nên dễ dàng hơn",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "text",
+          "value": "| Interface | Tên phương thức | Tham số phương thức | Kiểu trả về |\n|-----------|-----------------|---------------------|-------------|\n| Consumer  | andThen()       | Consumer            | Consumer    |\n| Function  | andThen()       | Function            | Function    |\n| Function  | compose()       | Function            | Function    |\n| Predicate | and()           | Predicate           | Predicate   |\n| Predicate | negate()        | —                   | Predicate   |\n| Predicate | or()            | Predicate           | Predicate   |"
+        }
+      ],
+      "keywords": [
+        "Functional Interface",
+        "Convenience Method"
+      ],
+      "updatedAt": "2026-01-30T07:50:23.611Z"
+    },
+    {
+      "title": "Vì phương thức test() của Predicate trả về giá trị boolean, nên ta có thể sử dụng các Convenience Method như and(), or() để kết hợp nó với một Predicate khác, từ đó tạo ra một Predicate mới mà phương thức test() sẽ trả về kết quả là sự kết hợp logic giữa hai điều kiện ban đầu",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "code",
+          "value": "Predicate<String> egg = s -> s.contains(\"egg\");\r\nPredicate<String> brown = s -> s.contains(\"brown\");"
+        },
+        {
+          "type": "text",
+          "value": "Nếu muốn kết hợp điều kiện để tạo một Predicate giúp kiểm tra **trứng nâu** và tạo một Predicate giúp kiểm tra trứng **không phải có màu nâu**, ta làm thủ công như sau:"
+        },
+        {
+          "type": "code",
+          "value": "Predicate<String> brownEggs = s -> s.contains(\"egg\") && s.contains(\"brown\");\r\nPredicate<String> otherEggs = s -> s.contains(\"egg\") && !s.contains(\"brown\");"
+        },
+        {
+          "type": "text",
+          "value": "**Cách tối ưu hơn** ở đây là sử dụng default method `and()` và `negate()` của Predicate:"
+        },
+        {
+          "type": "code",
+          "value": "Predicate<String> brownEggs = egg.and(brown);\r\nPredicate<String> otherEggs = egg.and(brown.negate());"
+        }
+      ],
+      "keywords": [
+        "Functional Interface",
+        "Convenience Method"
+      ],
+      "id": "topic-1769759621494",
+      "createdAt": "2026-01-30T07:53:41.494Z",
+      "updatedAt": "2026-01-30T07:53:41.494Z"
+    },
+    {
+      "id": "topic-1769824448440",
+      "title": "Function1.andThen(Function2) nghĩa là Function1 được thực thi trước, kết quả trả về của nó sẽ được truyền làm đầu vào cho Function2, và kết quả của Function2 là kết quả cuối cùng",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "code",
+          "value": "Function<T, R> f1;\r\nFunction<R, V> f2;\r\nFunction<T, V> f = f1.andThen(f2);"
+        },
+        {
+          "type": "text",
+          "value": "Ví dụ:"
+        },
+        {
+          "type": "code",
+          "value": "Function<Integer, Integer> times2 = x -> x * 2;\r\nFunction<Integer, String> toStr = x -> \"Result: \" + x;\r\nFunction<Integer, String> combined = times2.andThen(toStr);\r\nSystem.out.println(combined.apply(5));"
+        },
+        {
+          "type": "text",
+          "value": "Luồng chạy:"
+        },
+        {
+          "type": "code",
+          "value": "5 → times2 → 10 → toStr → \"Result: 10\""
+        }
+      ],
+      "keywords": [
+        "Functional Interface",
+        "Function"
+      ],
+      "updatedAt": "2026-01-31T07:26:35.912Z"
+    },
+    {
+      "id": "topic-1769824552289",
+      "title": "Đối với Consumer, ta có thể sử dụng method andThen() để chạy hai functional interface tuần tự và cả 2 đều nhận chung tham số",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "code",
+          "value": "Consumer<T> c1;\r\nConsumer<T> c2;\r\nConsumer<T> c = c1.andThen(c2);"
+        },
+        {
+          "type": "text",
+          "value": "Ví dụ:"
+        },
+        {
+          "type": "code",
+          "value": "Consumer<String> c1 = x -> System.out.print(\"1: \" + x);\r\nConsumer<String> c2 = x -> System.out.print(\",2: \" + x);\r\nConsumer<String> combined = c1.andThen(c2);\r\ncombined.accept(\"Annie\");  // 1: Annie,2: Annie"
+        },
+        {
+          "type": "text",
+          "value": "Ở đây, cùng một tham số `\"Annie\"` được truyền vào cả `c1` và `c2`. Hai Consumer được chạy nối tiếp và **độc lập** với nhau."
+        }
+      ],
+      "keywords": [
+        "Functional Interface",
+        "Consumer"
+      ],
+      "updatedAt": "2026-01-31T07:26:51.681Z"
+    },
+    {
+      "id": "topic-1769844130791",
+      "title": "Trái ngược với andThen(), method compose() sẽ thực thi Function được truyền vào trước, rồi lấy kết quả đó làm input cho Function hiện tại",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "code",
+          "value": "Function<Integer, Integer> before = x -> x + 1;\r\nFunction<Integer, Integer> after = x -> x * 2;\r\nFunction<Integer, Integer> combined = after.compose(before);\r\n\r\nSystem.out.println(combined.apply(3)); // 8"
+        }
+      ],
+      "keywords": [
+        "Lambda Expression",
+        "Function"
+      ],
+      "updatedAt": "2026-01-31T07:27:04.345Z"
+    },
+    {
+      "title": "BooleanSupplier là một Functional Interface riêng, có duy nhất một Abstract Method là getAsBoolean trả về 1 giá trị boolean (primitive)",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "code",
+          "value": "BooleanSupplier b1 = () -> true;\r\nBooleanSupplier b2 = () -> Math.random() > 0.5;\r\n\r\nSystem.out.println(b1.getAsBoolean()); // true\r\nSystem.out.println(b2.getAsBoolean()); // true hoặc false\r\n"
+        },
+        {
+          "type": "text",
+          "value": "- `b1` luôn trả về `true`.\n- `b2` trả về `true` hoặc `false` tùy vào giá trị random."
+        }
+      ],
+      "keywords": [
+        "Functional Interface",
+        "BooleanSupplier"
+      ],
+      "id": "topic-1769844373447",
+      "createdAt": "2026-01-31T07:26:13.447Z",
+      "updatedAt": "2026-01-31T07:26:13.447Z"
+    },
+    {
+      "id": "topic-1769844583642",
+      "title": "Cách sử dụng các Primitive Functional Interface (double, int, long)",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "text",
+          "value": "Đặc trưng của **Primitive Functional Interface** là:\n\n-   Tham số hoặc kết quả dùng kiểu nguyên thủy (primitive).\n-   Tránh boxing/unboxing, tối ưu cho **streams** (IntStream, LongStream, DoubleStream).\n\n| Functional Interface        | Kiểu trả về | Tên phương thức  | Số tham số      |\n|-----------------------------|-------------|-------------------|-----------------|\n| DoubleSupplier              | double      | getAsDouble       | 0               |\n| IntSupplier                 | int         | getAsInt          | 0               |\n| LongSupplier                | long        | getAsLong         | 0               |\n| DoubleConsumer              | void        | accept            | 1 double        |\n| IntConsumer                 | void        | accept            | 1 int           |\n| LongConsumer                | void        | accept            | 1 long          |\n| DoublePredicate             | boolean     | test              | 1 double        |\n| IntPredicate                | boolean     | test              | 1 int           |\n| LongPredicate               | boolean     | test              | 1 long          |\n| DoubleFunction<R>           | R           | apply             | 1 double        |\n| IntFunction<R>              | R           | apply             | 1 int           |\n| LongFunction<R>             | R           | apply             | 1 long          |\n| DoubleUnaryOperator         | double      | applyAsDouble     | 1 double        |\n| IntUnaryOperator            | int         | applyAsInt        | 1 int           |\n| LongUnaryOperator           | long        | applyAsLong       | 1 long          |\n| DoubleBinaryOperator        | double      | applyAsDouble     | 2 double        |\n| IntBinaryOperator           | int         | applyAsInt        | 2 int           |\n| LongBinaryOperator          | long        | applyAsLong       | 2 long          |"
+        },
+        {
+          "type": "code",
+          "value": "var d = 1.0;\r\nf1.applyAsInt(d);\r\nf1 = x -> 1;"
+        },
+        {
+          "type": "text",
+          "value": "- Nhìn vào đây, thấy tham số là **double**, trả về **int**, method tên **applyAsInt**.\n- Các interface đáp ứng điều này: `DoubleToIntFunction` hoặc `ToIntFunction<Double>`."
+        }
+      ],
+      "keywords": [
+        "Functional Interface",
+        "Primitive Functional Interface"
+      ],
+      "updatedAt": "2026-01-31T07:31:57.881Z"
+    },
+    {
+      "id": "topic-1769844902201",
+      "title": "Các sử dụng các Primitive Type Conversion Functional Interface",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "text",
+          "value": "**Primitive Type Conversion Functional Interface** là các Functional Interface chuyên biệt cho việc chuyển đổi giữa các kiểu primitive hoặc kết hợp giữa `Object` + primitive.\n\n| Functional Interface          | Kiểu trả về | Tên phương thức trừu tượng | Số lượng tham số   |\n|------------------------------|-------------|-----------------------------|--------------------|\n| ToDoubleFunction<T>          | double      | applyAsDouble               | 1 (T)              |\n| ToIntFunction<T>             | int         | applyAsInt                  | 1 (T)              |\n| ToLongFunction<T>            | long        | applyAsLong                 | 1 (T)              |\n| ToDoubleBiFunction<T, U>     | double      | applyAsDouble               | 2 (T, U)           |\n| ToIntBiFunction<T, U>        | int         | applyAsInt                  | 2 (T, U)           |\n| ToLongBiFunction<T, U>       | long        | applyAsLong                 | 2 (T, U)           |\n| DoubleToIntFunction          | int         | applyAsInt                  | 1 (double)         |\n| DoubleToLongFunction         | long        | applyAsLong                 | 1 (double)         |\n| IntToDoubleFunction          | double      | applyAsDouble               | 1 (int)            |\n| IntToLongFunction            | long        | applyAsLong                 | 1 (int)            |\n| LongToDoubleFunction         | double      | applyAsDouble               | 1 (long)           |\n| LongToIntFunction            | int         | applyAsInt                  | 1 (long)           |\n| ObjDoubleConsumer<T>         | void        | accept                      | 2 (T, double)      |\n| ObjIntConsumer<T>            | void        | accept                      | 2 (T, int)         |\n| ObjLongConsumer<T>           | void        | accept                      | 2 (T, long)        |"
+        }
+      ],
+      "keywords": [
+        "Functional Interface",
+        "Primitive Type Conversion Functional Interface"
+      ],
+      "updatedAt": "2026-01-31T07:35:43.569Z"
+    },
+    {
+      "id": "topic-1769847943403",
+      "title": "Phân biệt Primitive Functional Interfaces và Primitive Type Conversion Functional Interfaces",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769565911325",
+      "parentTopicTitle": "Functional Interface",
+      "content": [
+        {
+          "type": "text",
+          "value": "***Primitive functional interfaces***\n\n-   **Ít nhất một trong hai phía (tham số hoặc kết quả) là primitive**  \n-   Mục tiêu chính:\n    -   Tránh boxing/unboxing (`Double` ↔ `double`, `Integer` ↔ `int`)        \n    -   Tối ưu hiệu năng cho `IntStream`, `LongStream`, `DoubleStream`      \n\nThực tế chia ra 2 nhóm:\n\n**(1) Nhận tham số primitive**\n\nPrimitive functional interface thì đa số **nhận tham số primitive**\n\n**(2) Không nhận tham số, chỉ trả về primitive (Supplier)**\n\n-   `DoubleSupplier` → trả về `double`   \n-   `IntSupplier` → trả về `int`\n-   `LongSupplier` → trả về `long`\n    \nSupplier là ngoại lệ, vì nó không có input, nên đặc trưng primitive nằm ở **output**.\n\n---\n\n\n\n***Primitive type conversion functional interfaces***\n\nĐây là nhóm **chuyên để chuyển đổi kiểu**. Điểm cốt lõi của nhóm này là: **return type luôn là primitive**.\n\nNhóm này chia thành 3 loại:\n\n**(1) Object → primitive**\n\nDùng khi: `ToIntFunction<String> f = s -> s.length();`\n\n**(2) Primitive → primitive khác**"
+        },
+        {
+          "type": "code",
+          "value": "var d = 1.0;\r\nf1.applyAsInt(d);\r\nf1 = x -> 1;"
+        },
+        {
+          "type": "text",
+          "value": "-   Input: `double`    \n-   Output: `int`    \n-   Method: `applyAsInt`\n    \nHai lựa chọn hợp lệ:\n\n-   `DoubleToIntFunction` (chuẩn nhất, không boxing)   \n-   `ToIntFunction<Double>` (bị boxing Double → double)\n\nNếu tối ưu hiệu năng: **nên chọn `DoubleToIntFunction`**.\n\n**(3) Object + primitive → void (Consumer đặc biệt)**\n\nĐối với những Functional Interface không có kết quả trả về như Consumer thì phải là `ObjDoubleConsumer` / `ObjIntConsumer` / `ObjLongConsumer`.\n\nTóm gọn lại:\n> **Primitive functional interface:**  \n> → Thường nhận primitive (trừ Supplier trả primitive)\n\n> **Primitive type conversion functional interfaces:**  \n> → Luôn trả primitive  \n> → Consumer thì phải dùng `ObjXConsumer<T>`"
+        }
+      ],
+      "keywords": [
+        "Functional Interface",
+        "Primitive Functional Interface",
+        "Primitive Type Conversion Functional Interface"
+      ],
+      "updatedAt": "2026-01-31T08:52:36.149Z"
+    },
+    {
+      "id": "topic-1769849677626",
+      "title": "Có thể sử dụng var để chỉ định làm kiểu cho tham số của Lambda Expression",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "code",
+          "value": "Predicate<String> p = x -> true;\r\nPredicate<String> p = (var x) -> true;\r\nPredicate<String> p = (String x) -> true;"
+        },
+        {
+          "type": "text",
+          "value": "3 biểu thức lambda trên là tương đương nhau.\n\nKể cả trong trường hợp không chỉ định kiểu generic cho `Predicate` (dùng raw type), thì vẫn biên dịch được. Khi đó, kiểu của tham số lambda bị suy ra là `Object`, nên việc dùng `var` trở nên dư thừa vì không mang thêm thông tin kiểu nào."
+        },
+        {
+          "type": "code",
+          "value": "Predicate p = (var x) -> true;"
+        }
+      ],
+      "keywords": [
+        "Lambda Expression"
+      ],
+      "updatedAt": "2026-01-31T09:00:08.102Z"
     }
   ]
 }
