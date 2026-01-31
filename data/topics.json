@@ -1315,6 +1315,164 @@
         "Lambda Expression"
       ],
       "updatedAt": "2026-01-31T09:00:08.102Z"
+    },
+    {
+      "title": "Khi dùng Predicate dạng raw type, tham số lambda mặc định có kiểu Object. Vì vậy chỉ có thể dùng var hoặc không ghi kiểu; nếu khai báo một kiểu cụ thể (như String) sẽ gây lỗi biên dịch do không khớp chữ ký phương thức test(Object)",
+      "category": "functional-streams",
+      "parentTopicId": "parent-1769487867272",
+      "parentTopicTitle": "Lambda Expression",
+      "content": [
+        {
+          "type": "code",
+          "value": "Predicate p = (String x) -> true; // LỖI BIÊN DỊCH\r\nPredicate p = x -> true; // HỢP LỆ\r\nPredicate p = (var x) -> true; // HỢP LỆ"
+        }
+      ],
+      "keywords": [
+        "Lambda Expression",
+        "Predicate"
+      ],
+      "id": "topic-1769851293753",
+      "createdAt": "2026-01-31T09:21:33.753Z",
+      "updatedAt": "2026-01-31T09:21:33.753Z"
+    },
+    {
+      "id": "topic-1769851384459",
+      "title": "Hàm sort của một đối tượng List yêu cầu truyền vào 1 Comparator hoặc null. Nếu không sẽ gây lỗi biên dịch",
+      "category": "collections-generics",
+      "parentTopicId": "parent-1769851384437",
+      "parentTopicTitle": "List",
+      "content": [
+        {
+          "type": "text",
+          "value": "- Nếu phần tử thuộc đối tượng List đã implement `Comparable` → có thể truyền `null`.\n- Nếu phần tử đối tượng List chưa implement `Comparable` hoặc muốn tự định nghĩa cách sắp xếp → truyền `Comparator`.\n- Nếu dùng sort trên 1 đối tượng List (đã có phần tử trong danh sách), mà chỉ truyền null, không truyền Comparator, trong khi các phần tử trong List đó chưa được implement Comparable sẽ gây lỗi runtime ClassCastException.\n- Tuy nhiên trong trường hợp List chưa có phần tử nào thì không gây lỗi runtime."
+        }
+      ],
+      "keywords": [
+        "List",
+        "Hàm sort",
+        "Comparator"
+      ],
+      "updatedAt": "2026-01-31T09:26:47.883Z"
+    },
+    {
+      "id": "topic-1769851817375",
+      "title": "Hàm Collections.sort() yêu cầu truyền vào List có phần tử implement Comparable, hoặc truyền vào List + Comparator nếu phần tử không implement Comparable hoặc muốn custom cách so sánh",
+      "category": "collections-generics",
+      "parentTopicId": "parent-1769851384437",
+      "parentTopicTitle": "List",
+      "content": [
+        {
+          "type": "code",
+          "value": "public static <T extends Comparable<? super T>>\r\nvoid sort(List<T> list)\r\n\r\npublic static <T>\r\nvoid sort(List<T> list, Comparator<? super T> c)"
+        }
+      ],
+      "keywords": [
+        "Collections",
+        "Hàm sort"
+      ],
+      "updatedAt": "2026-01-31T09:32:42.553Z"
+    },
+    {
+      "id": "topic-1769852184050",
+      "title": "Collections là một class tiện ích (utility class) chứa toàn bộ static method để thao tác với các collection (List, Set, Map…)",
+      "category": "collections-generics",
+      "parentTopicId": "parent-1769852199485",
+      "parentTopicTitle": "Collections",
+      "content": [
+        {
+          "type": "text",
+          "value": "Một số hàm rất hay dùng của Collections:"
+        },
+        {
+          "type": "code",
+          "value": "Collections.sort(list); Collections.sort(list, comparator); // Sắp xếp\r\nCollections.reverse(list); // Đảo ngược List\r\nCollections.shuffle(list); // Trộn ngẫu nhiên\r\nCollections.max(list); Collections.min(list); // Tìm max, min\r\nList<String> unmodifiable = Collections.unmodifiableList(list); // Tạo collection bất biến (read-only)\r\nList<String> empty = Collections.emptyList(); // Tạo list chỉ đọc, rỗng\r\n"
+        },
+        {
+          "type": "text",
+          "value": "Collections rất dễ bị nhầm lẫn với mấy khái niệm sau:\n\n| Tên | Là gì | Vai trò |\n| --- | --- | --- |\n| `Collection` | Interface | Gốc của List, Set, Queue |\n| `Collections` | Class | Chứa các static method tiện ích |\n| `Collector` | Interface (Stream API) | Dùng với `.collect()` |"
+        }
+      ],
+      "keywords": [
+        "Collections"
+      ],
+      "updatedAt": "2026-01-31T09:39:31.082Z"
+    },
+    {
+      "id": "topic-1769872488250",
+      "title": "Collections.sort() chỉ dùng được với List mà không dùng cho mọi Collection (Set, Queue)",
+      "category": "collections-generics",
+      "parentTopicId": "parent-1769852199485",
+      "parentTopicTitle": "Collections",
+      "content": [
+        {
+          "type": "text",
+          "value": "`Collections.sort()` cần:\n\n-   Lấy phần tử thứ `i`    \n-   So sánh với phần tử thứ `j`    \n-   Đổi chỗ 2 phần tử\n    \nNhững thao tác này chỉ có ở `List` (vì `List` có thứ tự và có index: `get(i)`, `set(i, value)`).\n\nTrong khi đó:\n\n-   `Set` không có index, không đảm bảo thứ tự   \n-   `Queue` không có khái niệm vị trí i, j\n-   `Collection` là interface tổng quát, không cam kết có thứ tự \n\nNên không thể sort trực tiếp được."
+        }
+      ],
+      "keywords": [
+        "Collection",
+        "List",
+        "Hàm sort"
+      ],
+      "updatedAt": "2026-01-31T15:15:11.933Z"
+    },
+    {
+      "id": "topic-1769872861577",
+      "title": "Arrays.sort() có rất nhiều phiên bản overload để sắp xếp các kiểu dữ liệu khác nhau và theo nhiều cách khác nhau",
+      "category": "collections-generics",
+      "parentTopicId": "parent-1769872861546",
+      "parentTopicTitle": "Mảng",
+      "content": [
+        {
+          "type": "text",
+          "value": "***1. Overload cho mảng kiểu nguyên thủy (primitive)***"
+        },
+        {
+          "type": "code",
+          "value": "Arrays.sort(int[] a)\r\nArrays.sort(long[] a)\r\nArrays.sort(double[] a)\r\nArrays.sort(float[] a)\r\nArrays.sort(short[] a)\r\nArrays.sort(byte[] a)\r\nArrays.sort(char[] a)"
+        },
+        {
+          "type": "text",
+          "value": "Sắp xếp **tăng dần** theo thứ tự tự nhiên.\n\n***2. Overload cho mảng object (wrapper, String, class tự định nghĩa)***"
+        },
+        {
+          "type": "code",
+          "value": "Arrays.sort(Object[] a)"
+        },
+        {
+          "type": "text",
+          "value": "Object phải implement `Comparable`"
+        },
+        {
+          "type": "text",
+          "value": "***3. Sort với Comparator (tùy chỉnh cách sắp xếp)***"
+        },
+        {
+          "type": "code",
+          "value": "Arrays.sort(T[] a, Comparator<? super T> c)"
+        },
+        {
+          "type": "text",
+          "value": "Ví dụ sắp xếp giảm dần:"
+        },
+        {
+          "type": "code",
+          "value": "Integer[] nums = {3, 1, 2};\r\n\r\nArrays.sort(nums, (a, b) -> b - a); // [3, 2, 1]\r\n\r\n// Hoặc dùng method reference:\r\n\r\nArrays.sort(nums, Comparator.reverseOrder()); // [3, 2, 1]"
+        },
+        {
+          "type": "text",
+          "value": "***4. Sort 1 phần mảng (theo khoảng chỉ định)***"
+        },
+        {
+          "type": "code",
+          "value": "Arrays.sort(int[] a, int fromIndex, int toIndex)\r\nArrays.sort(T[] a, int fromIndex, int toIndex)\r\nArrays.sort(T[] a, int fromIndex, int toIndex, Comparator<? super T> c)"
+        }
+      ],
+      "keywords": [
+        "Mảng",
+        "Hàm sort"
+      ],
+      "updatedAt": "2026-01-31T15:28:59.643Z"
     }
   ]
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import fs from 'fs';
 import path from 'path';
 
@@ -97,12 +97,21 @@ export default async function TopicsListPage() {
                                             <td className="py-3 px-4">
                                                 <div className="flex items-center justify-end space-x-2">
                                                     <Link
+                                                        href={`/topics/${topic.id}`}
+                                                        target="_blank"
+                                                        className="p-2 hover:bg-gray-700 rounded"
+                                                        title="View Topic"
+                                                    >
+                                                        <Eye size={16} />
+                                                    </Link>
+                                                    <Link
                                                         href={`/admin/topics/${topic.id}`}
                                                         className="p-2 hover:bg-gray-700 rounded"
+                                                        title="Edit Topic"
                                                     >
                                                         <Edit size={16} />
                                                     </Link>
-                                                    <button className="p-2 hover:bg-red-900/30 text-red-400 rounded">
+                                                    <button className="p-2 hover:bg-red-900/30 text-red-400 rounded" title="Delete Topic">
                                                         <Trash2 size={16} />
                                                     </button>
                                                 </div>

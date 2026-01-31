@@ -55,6 +55,27 @@
       "description": "",
       "id": "parent-1769565911325",
       "createdAt": "2026-01-28T02:05:11.325Z"
+    },
+    {
+      "title": "List",
+      "category": "collections-generics",
+      "description": "",
+      "id": "parent-1769851384437",
+      "createdAt": "2026-01-31T09:23:04.437Z"
+    },
+    {
+      "title": "Collections",
+      "category": "collections-generics",
+      "description": "",
+      "id": "parent-1769852199485",
+      "createdAt": "2026-01-31T09:36:39.485Z"
+    },
+    {
+      "title": "Mảng",
+      "category": "collections-generics",
+      "description": "",
+      "id": "parent-1769872861546",
+      "createdAt": "2026-01-31T15:21:01.546Z"
     }
   ]
 }
